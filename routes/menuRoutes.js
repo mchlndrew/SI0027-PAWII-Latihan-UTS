@@ -4,9 +4,17 @@
 //   POST   /          tambah menu
 //   PUT    /:id       ubah menu
 //   DELETE /:id       hapus menu
-
 const express = require("express");
 const router = express.Router();
+const menuController = require("../controllers/menuController");
+
+router.get("/", menuController.getAll);
+router.get("/:id", menuController.getById);
+router.post("/", menuController.create);
+router.put("/:id", menuController.update);
+router.delete("/:id", menuController.remove);
+
+
 // TODO C1: require menuController dari ../controllers/menuController
 
 // TODO C1: daftarkan kelima route di atas ke fungsi controller yang sesuai

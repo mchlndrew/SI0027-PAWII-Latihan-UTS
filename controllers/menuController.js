@@ -20,6 +20,25 @@ const MAX_LIMIT = 100;
 //   - data memuat kantinId yang ter-populate (objek Kantin)
 exports.getAll = async (req, res) => {
   // TODO B1
+  const filter = {};
+  if (req.query.kantinId) {
+    filter.kantinId = req.query.kantinId;
+  }
+  const page = Math.max(parseInt(req.query.page) || 1, 1);
+  const limit = Math.min(parseInt(req.query.limit) || 10, MAX_LIMIT);
+  const sortField = req.query.sort || "createdAt";
+  const projection = req.query.fields ? req.query.fields.split(",").join(" ") : "";
+
+  const data = await Menu.find(filter)
+    .populate("kantinId")
+    .select(projection)
+    .sort({ [sortField]: 1 })
+    .skip((page - 1) * limit)
+    .limit(limit);
+
+  const total = await Menu.countDocuments(filter);
+
+  res.json({ data, page, limit, total });
 };
 
 // GET /menu/:id
@@ -28,6 +47,9 @@ exports.getAll = async (req, res) => {
 //   - format id salah -> 400 (ditangani errorHandler lewat CastError)
 exports.getById = async (req, res) => {
   // TODO B2
+  const data = await Menu.findById(req.params.id).populate("kantinId");
+  if (!data) throw { status: 404, message: "Tidak ditemukan" };
+  res.json(data);
 };
 
 // POST /menu
@@ -35,6 +57,8 @@ exports.getById = async (req, res) => {
 //   - validasi gagal / ISBN duplikat -> 400 (ditangani errorHandler)
 exports.create = async (req, res) => {
   // TODO B3
+  const menu = await Menu.create(req.body);
+  res.status(201).json(menu);
 };
 
 // PUT /menu/:id
@@ -43,6 +67,12 @@ exports.create = async (req, res) => {
 //   - tidak ada -> 404 { message }
 exports.update = async (req, res) => {
   // TODO B4
+  const data = await Mahasiswa.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!data) throw { status: 404, message: "Tidak ditemukan" };
+  res.json(data);
 };
 
 // DELETE /menu/:id
@@ -50,4 +80,7 @@ exports.update = async (req, res) => {
 //   - tidak ada -> 404 { message }
 exports.remove = async (req, res) => {
   // TODO B5
+  const data = await Menu.findByIdAndDelete(req.params.id);
+  if (!data) throw { status: 404, message: "Tidak ditemukan" };
+  res.status(204).send();
 };
