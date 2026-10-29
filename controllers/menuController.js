@@ -67,7 +67,7 @@ exports.create = async (req, res) => {
 //   - tidak ada -> 404 { message }
 exports.update = async (req, res) => {
   // TODO B4
-  const data = await Mahasiswa.findByIdAndUpdate(req.params.id, req.body, {
+  const data = await Menu.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });

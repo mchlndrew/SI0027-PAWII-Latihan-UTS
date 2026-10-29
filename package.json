@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "api": "node api.js",
     "test:api": "newman run postman/SI0027-PAWII-Latihan-UTS.postman_collection.json -e postman/latihan.postman_environment.json --timeout-request 5000"
   },
   "dependencies": {
